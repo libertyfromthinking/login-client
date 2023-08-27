@@ -4,40 +4,44 @@ import { useDispatch } from 'react-redux';
 import { login } from './store/actions';
 import { post } from './api';
 
-const Login = ({ onLogin }) => {
-  const [username, setUsername] = useState('');
+const Login = () => {
+  const [id, setid] = useState('');
   const [password, setPassword] = useState('');
+  const [step, setStep] = useState(0);
   const dispatch = useDispatch();
 
-  const handleSubmit = async (e) => {
+  const handleSubmitId = async (e) => {
+    e.preventDefault();
+    setStep(1);
+  };
+
+  const handleSubmitPw = async (e) => {
     e.preventDefault();
     try {
-      const response = await post('/login', { username, password });
-
-      const { username: loggedInUsername } = response.data;
-      onLogin(loggedInUsername);
-      dispatch(login(loggedInUsername));
-    } catch (error) {
-      console.log(error);
-
-      if (error.response && error.response.status === 401) {
-        alert('인증에 실패하였습니다. 다시 시도해주세요.');
-      } else {
-        alert('오류가 발생했습니다. 다시 시도해주세요.', error);
-      }
+      const { username } = await post('/login', { id, password });
+      dispatch(login(username));
+    } catch (e) {
+      alert('로그인 과정 중 에러가 발생햇습니다.', e);
+      console.error('로그인 과정 중 에러가 발생햇습니다.', e);
     }
   };
 
-  return (
-    <form onSubmit={handleSubmit}>
+  return step === 0 ? (
+    <form onSubmit={handleSubmitId}>
       <input
         type='text'
         placeholder='아이디'
-        value={username}
+        value={id}
         onChange={(e) => {
-          setUsername(e.target.value);
+          setid(e.target.value);
         }}
       />
+      <button type='submit' onClick={handleSubmitId}>
+        다음
+      </button>
+    </form>
+  ) : (
+    <form onSubmit={handleSubmitPw}>
       <input
         type='password'
         placeholder='비밀번호'
@@ -46,7 +50,9 @@ const Login = ({ onLogin }) => {
           setPassword(e.target.value);
         }}
       />
-      <button type='submit'>로그인</button>
+      <button type='submit' onClick={handleSubmitPw}>
+        로그인
+      </button>
     </form>
   );
 };
