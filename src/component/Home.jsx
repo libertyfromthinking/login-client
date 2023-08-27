@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { logout } from './store/actions';
+import { logout } from '../store/actions';
 import Login from './Login';
 
 const Home = () => {

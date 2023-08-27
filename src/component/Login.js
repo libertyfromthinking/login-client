@@ -1,11 +1,15 @@
 // Login.js
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { login } from './store/actions';
-import { post } from './api';
+
+import PwInput from './PwInput';
+import IdInput from './IdInput';
+import { login } from '../store/actions';
+import { post } from '../api';
+import BackButton from './BackButton';
 
 const Login = () => {
-  const [id, setid] = useState('');
+  const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const [step, setStep] = useState(0);
   const dispatch = useDispatch();
@@ -26,34 +30,25 @@ const Login = () => {
     }
   };
 
-  return step === 0 ? (
-    <form onSubmit={handleSubmitId}>
-      <input
-        type='text'
-        placeholder='아이디'
-        value={id}
-        onChange={(e) => {
-          setid(e.target.value);
-        }}
-      />
-      <button type='submit' onClick={handleSubmitId}>
-        다음
-      </button>
-    </form>
-  ) : (
-    <form onSubmit={handleSubmitPw}>
-      <input
-        type='password'
-        placeholder='비밀번호'
+  const InputComponent = () => {
+    return step === 0 ? (
+      <IdInput onSubmit={handleSubmitId} value={id} setValue={setId} />
+    ) : (
+      <PwInput
+        onSubmit={handleSubmitPw}
         value={password}
-        onChange={(e) => {
-          setPassword(e.target.value);
-        }}
+        setValue={setPassword}
       />
-      <button type='submit' onClick={handleSubmitPw}>
-        로그인
-      </button>
-    </form>
+    );
+  };
+
+  return (
+    <div className='input-screen-container'>
+      <BackButton to={-1} />
+      <div className='input-wrapper'>
+        <InputComponent />
+      </div>
+    </div>
   );
 };
 
